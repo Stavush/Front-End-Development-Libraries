@@ -1,0 +1,182 @@
+const isOperator = /[+-/*]/;
+
+class App extends React.Component {
+  state = {
+    formula: '0',
+    currentNum: '0',
+    lastPressed: ''
+  }
+  constructor(props){
+    super(props);
+  } 
+  
+  handleClick = (e) => {
+    const { innerText } = e.target;
+    const { formula, currentNum } = this.state;
+    
+    switch(innerText){
+      case '=':
+        calculate;
+        break;
+        
+      case 'AC':
+        this.setState({
+          currentNum: '0',
+          formula: '0'
+        });
+        break;
+        
+      case '.':
+        const { currentNum } = this.state;
+        if (this.state.currentNum === '0'){
+          if (this.state.formula === '0'){
+            this.setState({
+            currentNum: '0' + innerText,
+            formula: '0' + innerText
+          });
+          } else {
+            this.setState({
+            currentNum: '0' + innerText,
+            formula: this.state.formula  + '0' + innerText
+          });
+          }
+        } else {
+           if (!this.state.currentNum.includes('.')){
+            this.setState({
+              formula: this.state.formula + innerText,
+              currentNum: this.state.currentNum + innerText
+            });
+           } 
+        }
+        break;
+      
+        case '-':
+        if (this.state.formula.slice(-1) != '-'){
+          if (this.state.formula.includes('=')){
+          this.setState({
+            formula: this.state.currentNum + innerText,
+            currentNum: '0'
+          });
+          } else{
+          this.setState({
+            formula: this.state.formula + innerText,
+            currentNum: '0'
+          });
+          }
+        }
+        break;
+        
+      case '+':
+      case '*':
+      case '/':
+        
+        if (formula.includes('=')){
+          this.setState({
+            formula: this.state.currentNum + innerText,
+            currentNum: '0'
+          });
+        } else {
+          if (formula.match(/[+\-*/]$/)){
+            this.setState({
+              formula: formula.replace(/[+\-*/]+/, innerText),
+              currentNum: '0'
+        });
+        } else {
+          this.setState({
+          formula: formula + innerText,
+            currentNum: '0'
+        });
+        }
+        }
+        break;
+      
+      default:
+        //when clicking a digit 
+         if ((this.state.formula === '0') ){ 
+           // if starting from scratch
+           this.setState({
+              formula: innerText,
+              currentNum: innerText
+           });
+         } else {
+           // if there's another calculation
+           if (this.state.formula.includes('=')){
+             this.setState({
+               formula: innerText,
+                currentNum: innerText
+             });
+           } else if (this.state.currentNum === '0' && this.state.currentNum !== '0.'){ 
+             // if num is 0 and formula isn't empty 
+             this.setState({
+              formula: this.state.formula + innerText,
+              currentNum: innerText             
+             });
+           } else { 
+             // if it's a non-ero and the formula isn't empty
+             this.setState({
+              formula: this.state.formula + innerText,
+              currentNum: this.state.currentNum + innerText             
+             });
+           }
+            
+         }
+    }      
+  }
+  
+  calculate = () => {
+    const result = eval(this.state.formula).toString();
+    this.setState({
+      currentNum: result,
+      formula: this.state.formula + '=' + result
+    });
+  }
+  
+  render(){
+   return(
+    <div id='container'>
+      
+      <div className="row" id="display-box">
+        <div className="row" id="formula-display"> {this.state.formula} </div>
+        <div className="row" id="display"> {this.state.currentNum} </div>
+      </div> 
+      
+      <div class="row" id="buttons">
+        <div class="row">
+          <button id="seven" value="7" onClick={this.handleClick}>7</button>
+          <button id="eight" value="8" onClick={this.handleClick}>8</button>
+          <button id="nine" value="9" onClick={this.handleClick}>9</button>
+          <button id="add" value="+" onClick={this.handleClick}>+</button>
+        </div>
+        <div className="row">
+          <button id="four" value="4" onClick={this.handleClick}>4</button>
+          <button id="five" value="5" onClick={this.handleClick}>5</button>
+          <button id="six" value="6" onClick={this.handleClick}>6</button>
+          <button id="subtract" value="-" onClick={this.handleClick}>-</button>
+        </div>
+        <div className="row">
+          <button id="one" value="1" onClick={this.handleClick}>1</button>
+          <button id="two" value="2" onClick={this.handleClick}>2</button>
+          <button id="three" value="3" onClick={this.handleClick}>3</button>
+          <button id="multiply" value="*" onClick={this.handleClick}>*</button>
+        </div>
+        <div className="row">
+          <button id="decimal" value="." onClick={this.handleClick}>.</button>
+          <button id="zero" value="0" onClick={this.handleClick}>0</button>
+          <button id="equals" value="=" onClick={this.calculate}>=</button>
+          <button id="divide" value="/" onClick={this.handleClick}>/</button>
+        </div>
+
+        <div className="row">
+          <button id="clear" value="AC" onClick={this.handleClick}>AC</button>
+        </div>
+        
+        
+          
+      </div>  
+    </div>
+  );
+  }
+  
+}
+
+ReactDOM.render(<App />, document.getElementById('app'));
